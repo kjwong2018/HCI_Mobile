@@ -1,4 +1,4 @@
-package com.literally_fantastic.hci_mobile;
+package us.matthewhoward.myapplication;
 
 import org.junit.Test;
 

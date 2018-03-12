@@ -1,4 +1,4 @@
-package com.literally_fantastic.hci_mobile;
+package us.matthewhoward.myapplication;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.literally_fantastic.hci_mobile", appContext.getPackageName());
+        assertEquals("us.matthewhoward.myapplication", appContext.getPackageName());
     }
 }
