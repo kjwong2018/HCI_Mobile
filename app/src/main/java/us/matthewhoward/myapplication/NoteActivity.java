@@ -7,10 +7,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -40,16 +42,23 @@ public class NoteActivity extends AppCompatActivity {
         noteTitle = findViewById(R.id.note_title);
         noteImage = findViewById(R.id.note_image);
 
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             isUpdate = true;
             noteId = (int) extras.getLong("noteId");
             setNote(noteId);
         }
+        else{
+            noteImage.setImageResource(R.drawable.default_image);
+        }
 
         saveNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(imagePath.isEmpty()){
+                    imagePath ="default";
+                }
                 if (!isUpdate) {
                     storeNote(imagePath, noteTitle.getText().toString(), "Description", "Category");
                 } else {
@@ -86,9 +95,18 @@ public class NoteActivity extends AppCompatActivity {
 
         // Set note details to view
         String path = cursor.getString(cursor.getColumnIndexOrThrow("noteImage"));
-        Bitmap bitmap = BitmapFactory.decodeFile(path);
-        noteImage.setImageBitmap(bitmap);
-
+        if(!path.equals("default")){
+            Log.d("PATH", path);
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            if(bitmap == null){
+                Toast.makeText(getApplicationContext(), "Image not found", Toast.LENGTH_LONG).show();
+            } else{
+                noteImage.setImageBitmap(bitmap);
+                imagePath = path;
+            }
+        }else{
+            noteImage.setImageResource(R.drawable.default_image);
+        }
         // Get the note text from the database as a String
         String noteText = cursor.getString(cursor.getColumnIndexOrThrow("noteText"));
         noteTitle.setText(noteText);
@@ -116,11 +134,14 @@ public class NoteActivity extends AppCompatActivity {
             @Override
             public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
                 // TODO error stuff
+                Log.d("Image Error", "Error handling suck");
+                e.printStackTrace();
             }
 
             @Override
             public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
                 imagePath = imageFile.getAbsolutePath();
+                Log.d("PATHpick", imagePath);
                 Bitmap imageBitmap = BitmapFactory.decodeFile(imagePath);
                 noteImage.setImageBitmap(imageBitmap);
             }

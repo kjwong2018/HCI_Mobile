@@ -11,10 +11,9 @@
         android:id="@+id/note_image"
         android:layout_width="66dp"
         android:layout_height="64dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@color/colorPrimary"
+        android:src="@android:drawable/ic_delete"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

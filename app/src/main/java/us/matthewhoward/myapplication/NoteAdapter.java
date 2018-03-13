@@ -2,15 +2,18 @@ package us.matthewhoward.myapplication;
 
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class NoteAdapter extends CursorAdapter {
@@ -32,7 +35,17 @@ public class NoteAdapter extends CursorAdapter {
 
         // Get the image from the database as a Bitmap
         String path = cursor.getString(cursor.getColumnIndexOrThrow("noteImage"));
-        Bitmap bitmap = BitmapFactory.decodeFile(path);
+        if(!path.equals("default")){
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            if(bitmap == null){
+                Toast.makeText(view.getContext(), "Image not found", Toast.LENGTH_SHORT).show();
+            } else{
+                noteImage.setImageBitmap(bitmap);
+            }
+        }else{
+            noteImage.setImageResource(R.drawable.default_image);
+        }
+
 
         // Get the note text from the database as a String
         String title = cursor.getString(cursor.getColumnIndexOrThrow("noteText"));
@@ -42,7 +55,6 @@ public class NoteAdapter extends CursorAdapter {
         String category = cursor.getString(cursor.getColumnIndexOrThrow("noteCategory"));
 
         // Populate fields with properties from database
-        noteImage.setImageBitmap(bitmap);
         noteText.setText(title);
     }
 }

@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     Cursor todoCursor;
     ListView noteList;
     NoteAdapter adapter;
+    SwipeRefreshLayout mySwipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         noteList = (ListView) findViewById(R.id.note_list);
         loadNotesFromDatabase();
+        mySwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         noteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -38,6 +42,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(openNote);
             }
         });
+        mySwipeRefresh.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Log.d("Refresh test", "test");
+                        loadNotesFromDatabase();
+                        mySwipeRefresh.setRefreshing(false);
+                    }
+                }
+        );
 
     }
     public boolean userHasPermission() {
