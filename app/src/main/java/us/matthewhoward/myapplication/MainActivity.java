@@ -1,7 +1,9 @@
 package us.matthewhoward.myapplication;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
     ListView noteList;
     NoteAdapter adapter;
     SwipeRefreshLayout mySwipeRefresh;
+    public static final String PREFS_NAME = "Preferences";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,14 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+        //Load preference.  If none found, we default to showing welcome screen
+        SharedPreferences settings = getSharedPreferences(getString(R.string.pref_file_name), 0);
+        String showWelcome = settings.getString(getString(R.string.pref_show), "true");
+
+        //Load welcome screen if pref_show is set to true, or no value has been set
+        if(showWelcome.equals("true")){
+            showLocationDialog();
+        }
     }
     public boolean userHasPermission() {
         return ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
@@ -120,4 +134,45 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
+    private void showLocationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Welcome to NoteTaker");
+        builder.setMessage("Here are a few tips to get you started!\n\n" +
+                "1.  To add a note locate the Add Note button on the top right\n\n" +
+                "2.  If you want to edit your note, simply click on it to make changes\n\n" +
+                "3.  Swipe down to refresh your changes\n\n" +
+                "4.  Enjoy!");
+
+        String showAgain = getString(android.R.string.ok);
+        builder.setPositiveButton(showAgain,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        savePreference("true");
+                    }
+                });
+
+        String doNotShowAgain = getString(R.string.welcome_do_not_show_again);
+        builder.setNegativeButton(doNotShowAgain,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        savePreference("false");
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        // display dialog
+        dialog.show();
+    }
+
+    //Saves preference to show the welcome message on startup
+    private void savePreference(String value){
+        SharedPreferences settings = getSharedPreferences(getString(R.string.pref_file_name), 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("show", value);
+        editor.commit();
+    }
+
 }
