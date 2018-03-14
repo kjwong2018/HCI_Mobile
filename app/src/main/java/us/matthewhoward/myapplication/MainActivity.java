@@ -28,9 +28,6 @@ public class MainActivity extends AppCompatActivity {
     ListView noteList;
     NoteAdapter adapter;
     SwipeRefreshLayout mySwipeRefresh;
-    public static final String PREFS_NAME = "Preferences";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
