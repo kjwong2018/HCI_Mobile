@@ -55,6 +55,6 @@ public class NoteAdapter extends CursorAdapter {
         String category = cursor.getString(cursor.getColumnIndexOrThrow("noteCategory"));
 
         // Populate fields with properties from database
-        noteText.setText(title);
+        noteText.setText(title+"\n"+"Category: "+category);
     }
 }

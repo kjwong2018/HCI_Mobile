@@ -3,4 +3,12 @@
     <string name="welcome_do_not_show_again">Don\'t show again</string>
     <string name="pref_file_name">pref</string>
     <string name="pref_show">show</string>
+
+    <string-array name="category_array">
+        <item>Select Category</item>
+        <item>Personal</item>
+        <item>Work</item>
+        <item>School</item>
+        <item>Other</item>
+    </string-array>
 </resources>

@@ -9,8 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +25,7 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 public class NoteActivity extends AppCompatActivity {
 
     String imagePath = "";
+    String category = "";
     Button saveNote;
     TextView noteTitle;
     ImageView noteImage;
@@ -52,19 +56,32 @@ public class NoteActivity extends AppCompatActivity {
         else{
             noteImage.setImageResource(R.drawable.default_image);
         }
+        Spinner spinner = (Spinner) findViewById(R.id.category_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.category_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        if(!category.isEmpty()){
+            int spinnerPos = adapter.getPosition(category);
+            spinner.setSelection(spinnerPos);
+        }
 
         saveNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(imagePath.isEmpty()){
-                    imagePath ="default";
+                if(!category.equals("Select Category")){
+                    if(imagePath.isEmpty()){
+                        imagePath ="default";
+                    }
+                    if (!isUpdate) {
+                        storeNote(imagePath, noteTitle.getText().toString(), "Description", category);
+                    } else {
+                        updateNote(noteId, imagePath, noteTitle.getText().toString(), "Description", category);
+                    }
+                    finish();
                 }
-                if (!isUpdate) {
-                    storeNote(imagePath, noteTitle.getText().toString(), "Description", "Category");
-                } else {
-                    updateNote(noteId, imagePath, noteTitle.getText().toString(), "Description", "Category");
+                else{
+                    Toast.makeText(getApplicationContext(), "Please select a category", Toast.LENGTH_SHORT).show();
                 }
-                finish();
             }
         });
 
@@ -76,6 +93,17 @@ public class NoteActivity extends AppCompatActivity {
             }
         });
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
+                category = parent.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
 
@@ -112,7 +140,9 @@ public class NoteActivity extends AppCompatActivity {
         noteTitle.setText(noteText);
 
         String noteDescription = cursor.getString(cursor.getColumnIndexOrThrow("noteDescription"));
-        String noteCategory = cursor.getString(cursor.getColumnIndexOrThrow("noteCategory"));
+        category = cursor.getString(cursor.getColumnIndexOrThrow("noteCategory"));
+
+
 
         cursor.close();
     }

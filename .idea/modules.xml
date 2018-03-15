@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/HCI_Mobile.iml" filepath="$PROJECT_DIR$/.idea/HCI_Mobile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/HCI_410.iml" filepath="$PROJECT_DIR$/.idea/HCI_410.iml" />
+      <module fileurl="file://C:\Users\kjwong\StudioProjects\HCI_410\.idea\HCI_Mobile.iml" filepath="C:\Users\kjwong\StudioProjects\HCI_410\.idea\HCI_Mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
