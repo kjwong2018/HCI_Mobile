@@ -27,7 +27,9 @@ public class NoteActivity extends AppCompatActivity {
     String imagePath = "";
     String category = "";
     Button saveNote;
+    Button deleteNote;
     TextView noteTitle;
+    TextView noteDescription;
     ImageView noteImage;
 
     SQLiteDatabase db;
@@ -43,8 +45,10 @@ public class NoteActivity extends AppCompatActivity {
         // Get the writable database
         db = handler.getReadableDatabase();
         saveNote = findViewById(R.id.create_note);
+        deleteNote = findViewById(R.id.delete_note);
         noteTitle = findViewById(R.id.note_title);
         noteImage = findViewById(R.id.note_image);
+        noteDescription = findViewById(R.id.note_description);
 
 
         Bundle extras = getIntent().getExtras();
@@ -68,20 +72,34 @@ public class NoteActivity extends AppCompatActivity {
         saveNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!category.equals("Select Category")){
+                if(category.equals("Select Category") && noteTitle.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(), "Title and Category missing", Toast.LENGTH_SHORT).show();
+                }
+                else if(category.equals("Select Category")){
+                    Toast.makeText(getApplicationContext(), "Please select a category", Toast.LENGTH_SHORT).show();
+                }
+                else if(noteTitle.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(), "Title is missing", Toast.LENGTH_SHORT).show();
+                }
+                else{
                     if(imagePath.isEmpty()){
                         imagePath ="default";
                     }
                     if (!isUpdate) {
-                        storeNote(imagePath, noteTitle.getText().toString(), "Description", category);
+                        storeNote(imagePath, noteTitle.getText().toString(), noteDescription.getText().toString(), category);
                     } else {
-                        updateNote(noteId, imagePath, noteTitle.getText().toString(), "Description", category);
+                        updateNote(noteId, imagePath, noteTitle.getText().toString(), noteDescription.getText().toString(), category);
                     }
                     finish();
                 }
-                else{
-                    Toast.makeText(getApplicationContext(), "Please select a category", Toast.LENGTH_SHORT).show();
-                }
+            }
+        });
+
+        deleteNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteNote(noteId);
+                finish();
             }
         });
 
@@ -139,7 +157,9 @@ public class NoteActivity extends AppCompatActivity {
         String noteText = cursor.getString(cursor.getColumnIndexOrThrow("noteText"));
         noteTitle.setText(noteText);
 
-        String noteDescription = cursor.getString(cursor.getColumnIndexOrThrow("noteDescription"));
+        String noteMessage = cursor.getString(cursor.getColumnIndexOrThrow("noteDescription"));
+        noteDescription.setText(noteMessage);
+
         category = cursor.getString(cursor.getColumnIndexOrThrow("noteCategory"));
 
 
@@ -155,6 +175,11 @@ public class NoteActivity extends AppCompatActivity {
         // Store the note in the database
         handler.storeNote(db, path, title, description, category);
     }
+    public void deleteNote(int id){
+        NoteTakingDatabase handler = new NoteTakingDatabase(getApplicationContext());
+        SQLiteDatabase db = handler.getWritableDatabase();
+        handler.deleteNote(db,id);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -164,14 +189,11 @@ public class NoteActivity extends AppCompatActivity {
             @Override
             public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
                 // TODO error stuff
-                Log.d("Image Error", "Error handling suck");
-                e.printStackTrace();
             }
 
             @Override
             public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
                 imagePath = imageFile.getAbsolutePath();
-                Log.d("PATHpick", imagePath);
                 Bitmap imageBitmap = BitmapFactory.decodeFile(imagePath);
                 noteImage.setImageBitmap(imageBitmap);
             }
