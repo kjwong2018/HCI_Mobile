@@ -51,18 +51,40 @@ public class MainActivity extends AppCompatActivity {
                     public void onRefresh() {
                         Log.d("Refresh test", "test");
                         loadNotesFromDatabase();
+
+                        //Load preference.  If none found, we default to showing welcome screen
+                        SharedPreferences settingsNoEntry = getSharedPreferences(getString(R.string.pref_no_notes_file_name), 0);
+                        String showNoEntry = settingsNoEntry.getString(getString(R.string.pref_no_notes_show), "true");
+
+                        if(noteList.getAdapter().getCount() == 0){
+                            if(showNoEntry.equals("true")){
+                                showNewEntryDialog();
+                            }
+                        }
+
                         mySwipeRefresh.setRefreshing(false);
                     }
                 }
         );
 
         //Load preference.  If none found, we default to showing welcome screen
-        SharedPreferences settings = getSharedPreferences(getString(R.string.pref_file_name), 0);
-        String showWelcome = settings.getString(getString(R.string.pref_show), "true");
+        SharedPreferences settingsNoEntry = getSharedPreferences(getString(R.string.pref_no_notes_file_name), 0);
+        String showNoEntry = settingsNoEntry.getString(getString(R.string.pref_no_notes_show), "true");
+
+        //Load preference.  If none found, we default to showing welcome screen
+        SharedPreferences settingsWelcome = getSharedPreferences(getString(R.string.pref_welcome_file_name), 0);
+        String showWelcome = settingsWelcome.getString(getString(R.string.pref_welcome_show), "true");
+
+
+        if(noteList.getAdapter().getCount() == 0){
+            if(showNoEntry.equals("true")){
+                showNewEntryDialog();
+            }
+        }
 
         //Load welcome screen if pref_show is set to true, or no value has been set
         if(showWelcome.equals("true")){
-            showLocationDialog();
+            showWelcomeDialog();
         }
     }
     public boolean userHasPermission() {
@@ -132,30 +154,65 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void showLocationDialog() {
+    private void showWelcomeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Welcome to NoteTaker");
         builder.setMessage("Here are a few tips to get you started!\n\n" +
-                "1.  To add a note locate the Add Note button on the top right\n\n" +
-                "2.  If you want to edit your note, simply click on it to make changes\n\n" +
-                "3.  Swipe down to refresh your changes\n\n" +
-                "4.  Enjoy!");
+                "--The \"home\" screen shows a list of all of you notes\n\n" +
+                "--You can edit a note by simply clicking on it\n\n" +
+                "--Click \"ADD NOTE\" button on the top left to create a new note\n\n" +
+                "--When adding a note, you can add an image, title, and description\n\n" +
+                "--Use the swipe down gesture to refresh your changes\n\n" +
+                "--Enjoy!");
 
         String showAgain = getString(android.R.string.ok);
         builder.setPositiveButton(showAgain,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        savePreference("true");
+                        savePreference("true", R.string.pref_welcome_file_name);
                     }
                 });
 
-        String doNotShowAgain = getString(R.string.welcome_do_not_show_again);
+        String doNotShowAgain = getString(R.string.do_not_show_again);
         builder.setNegativeButton(doNotShowAgain,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        savePreference("false");
+                        savePreference("false", R.string.pref_welcome_file_name);
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        // display dialog
+        dialog.show();
+    }
+
+
+    private void showNewEntryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("We have detected you have no notes...");
+        builder.setMessage("Lets help you get started!\n\n" +
+                "1.  To add a note locate the Add Note button on the top right\n\n" +
+                "2.  You can now add an image, category and description text to your note\n\n" +
+                "3.  Click create note\n\n" +
+                "4.  Now swipe to refresh your changes\n\n");
+
+        String showAgain = getString(android.R.string.ok);
+        builder.setPositiveButton(showAgain,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        savePreference("true", R.string.pref_no_notes_file_name);
+                    }
+                });
+
+        String doNotShowAgain = getString(R.string.do_not_show_again);
+        builder.setNegativeButton(doNotShowAgain,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        savePreference("false", R.string.pref_no_notes_file_name);
                     }
                 });
 
@@ -165,8 +222,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Saves preference to show the welcome message on startup
-    private void savePreference(String value){
-        SharedPreferences settings = getSharedPreferences(getString(R.string.pref_file_name), 0);
+    private void savePreference(String value, int stringId){
+        SharedPreferences settings = getSharedPreferences(getString(stringId), 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("show", value);
         editor.commit();

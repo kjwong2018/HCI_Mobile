@@ -178,7 +178,13 @@ public class NoteActivity extends AppCompatActivity {
     public void deleteNote(int id){
         NoteTakingDatabase handler = new NoteTakingDatabase(getApplicationContext());
         SQLiteDatabase db = handler.getWritableDatabase();
-        handler.deleteNote(db,id);
+        boolean success = handler.deleteNote(db,id);
+        if(!success){
+            Toast.makeText(getApplicationContext(), "Cannot delete a new entry", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Successfully deleted entry", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

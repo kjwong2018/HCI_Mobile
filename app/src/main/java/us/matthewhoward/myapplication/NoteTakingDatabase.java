@@ -44,8 +44,14 @@ public class NoteTakingDatabase extends SQLiteOpenHelper {
         db.update(DATABASE_NAME, values, "_id=?", new String[]{String.valueOf(id)});
     }
 
-    void deleteNote(SQLiteDatabase db, Integer id) {
-        this.getWritableDatabase().delete(DATABASE_NAME, "_id=?", new String[]{String.valueOf(id)});
+    boolean deleteNote(SQLiteDatabase db, Integer id) {
+        int result = this.getWritableDatabase().delete(DATABASE_NAME, "_id=?", new String[]{String.valueOf(id)});
+        if(result!=0){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     // This method will simply replace the database if it's out of date.
