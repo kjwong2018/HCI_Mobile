@@ -103,11 +103,12 @@ public class NoteActivity extends AppCompatActivity {
             }
         });
 
-        noteImage.setOnClickListener(new View.OnClickListener() {
+        noteImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onLongClick(View v) {
                 // Use the EasyImage library to open up a chooser to pick an image.
                 EasyImage.openChooserWithGallery(NoteActivity.this, "Choose an Image", 0);
+                return true;
             }
         });
 
