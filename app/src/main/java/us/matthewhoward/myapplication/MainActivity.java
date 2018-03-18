@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setMessage("Here are a few tips to get you started!\n\n" +
                 "--The \"home\" screen shows a list of all of you notes\n\n" +
                 "--You can edit a note by simply clicking on it\n\n" +
-                "--Click \"ADD NOTE\" button on the top left to create a new note\n\n" +
+                "--Click Add Note at the top right to create a new note\n\n" +
                 "--When adding a note, you can add an image, title, and description\n\n" +
                 "--Use the swipe down gesture to refresh your changes\n\n" +
                 "--Enjoy!");
