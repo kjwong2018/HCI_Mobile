@@ -54,6 +54,7 @@ public class NoteActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             isUpdate = true;
+            saveNote.setText("Save Note");
             noteId = (int) extras.getLong("noteId");
             setNote(noteId);
         }

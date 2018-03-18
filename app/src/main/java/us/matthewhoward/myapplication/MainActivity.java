@@ -1,12 +1,17 @@
 package us.matthewhoward.myapplication;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -18,8 +23,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
@@ -42,9 +51,46 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent openNote = new Intent(MainActivity.this, NoteActivity.class);
                 openNote.putExtra("noteId", id);
+                Log.w("first", Long.toString(id));
                 startActivity(openNote);
             }
         });
+        noteList.setOnItemLongClickListener(
+                new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+                        Cursor note = new NoteTakingDatabase(getApplicationContext()).getReadableDatabase()
+                                .rawQuery("SELECT * FROM notes WHERE _id = " + id, null);
+                        for (String row : note.getColumnNames()){
+                            Log.w("rows", row);
+                        }
+                        Log.w("id", Long.toString(id));
+
+//                        System.exit(-1);
+                        if(note.moveToFirst()){
+                            Log.w("sql", note.getString(0));
+                        }
+                        Log.w("what", Integer.toString(note.getColumnIndex("noteImage")));
+                        Log.w("picture?", note.getString(note.getColumnIndex("noteImage")));
+                        String path = note.getString(note.getColumnIndexOrThrow("noteImage"));
+//                        Bitmap bitmap = BitmapFactory.decodeFile(path);
+                        if(!path.equals("default")){
+                            Log.d("PATH", path);
+                            Bitmap bitmap = BitmapFactory.decodeFile(path);
+                            if(bitmap == null){
+                                Toast.makeText(getApplicationContext(), "Image not found", Toast.LENGTH_LONG).show();
+                            } else{
+                                showImage(bitmap);
+                            }
+                        }else{
+                            showImage(null);
+                        }
+//                        showImage(bitmap);
+                        return true;
+                    }
+                }
+        );
         mySwipeRefresh.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -65,6 +111,32 @@ public class MainActivity extends AppCompatActivity {
             showLocationDialog();
         }
     }
+
+    public void showImage(Bitmap bitmap) {
+        Dialog builder = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                //nothing;
+            }
+        });
+
+        ImageView imageView = new ImageView(this);
+        if(bitmap == null){
+            imageView.setImageResource(R.drawable.default_image);
+        } else {
+            imageView.setImageBitmap(bitmap);
+        }
+
+        builder.addContentView(imageView, new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.FILL_PARENT));
+        builder.show();
+    }
+
     public boolean userHasPermission() {
         return ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
