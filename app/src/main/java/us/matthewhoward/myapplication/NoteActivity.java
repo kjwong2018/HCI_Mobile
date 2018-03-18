@@ -98,8 +98,11 @@ public class NoteActivity extends AppCompatActivity {
         deleteNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteNote(noteId);
-                finish();
+                boolean success = deleteNote(noteId);
+                //If we could delete note, close screen
+                if(success){
+                    finish();
+                }
             }
         });
 
@@ -175,10 +178,21 @@ public class NoteActivity extends AppCompatActivity {
         // Store the note in the database
         handler.storeNote(db, path, title, description, category);
     }
-    public void deleteNote(int id){
+
+    //Returns boolean to say whether we deletd an entry or not
+    public boolean deleteNote(int id){
         NoteTakingDatabase handler = new NoteTakingDatabase(getApplicationContext());
         SQLiteDatabase db = handler.getWritableDatabase();
-        handler.deleteNote(db,id);
+        boolean success = handler.deleteNote(db,id);
+        if(!success){
+            //We couldn't delete an entry, show relevant error message
+            Toast.makeText(getApplicationContext(), "Cannot delete a new entry", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Successfully deleted entry", Toast.LENGTH_SHORT).show();
+            return true;
+        }
     }
 
     @Override
