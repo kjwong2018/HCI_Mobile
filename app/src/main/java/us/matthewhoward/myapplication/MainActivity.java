@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
                     // TODO tell the user we need permission for our app to work
                 }
                 break;
+                //hi
         }
     }
 
