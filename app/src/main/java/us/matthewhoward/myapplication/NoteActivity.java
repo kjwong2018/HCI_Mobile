@@ -1,18 +1,25 @@
 package us.matthewhoward.myapplication;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +38,7 @@ public class NoteActivity extends AppCompatActivity {
     TextView noteTitle;
     TextView noteDescription;
     ImageView noteImage;
+    boolean isImageFitToScreen;
 
     SQLiteDatabase db;
 
@@ -54,6 +62,7 @@ public class NoteActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             isUpdate = true;
+            saveNote.setText("Save Note");
             noteId = (int) extras.getLong("noteId");
             setNote(noteId);
         }
@@ -103,11 +112,20 @@ public class NoteActivity extends AppCompatActivity {
             }
         });
 
+
         noteImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                showImage();
+            }
+        });
+
+        noteImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
                 // Use the EasyImage library to open up a chooser to pick an image.
                 EasyImage.openChooserWithGallery(NoteActivity.this, "Choose an Image", 0);
+                return true;
             }
         });
 
@@ -198,5 +216,31 @@ public class NoteActivity extends AppCompatActivity {
                 noteImage.setImageBitmap(imageBitmap);
             }
         });
+    }
+
+    public void showImage() {
+        Dialog builder = new Dialog(this);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                //nothing;
+            }
+        });
+        try{
+            ImageView imageView = new ImageView(this);
+            Bitmap imageBitmap = BitmapFactory.decodeFile(imagePath);
+            imageView.setImageBitmap(imageBitmap);
+            builder.addContentView(imageView, new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            builder.show();
+        }
+        catch(Exception ex){
+            Toast.makeText(getApplicationContext(), "Could not generate full screen image", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
