@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginEnd="8dp"
@@ -31,31 +32,51 @@
         android:id="@+id/category_spinner"
         android:layout_width="fill_parent"
         android:layout_height="36dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/note_description"
         app:layout_constraintTop_toBottomOf="@+id/note_image" />
 
     <EditText
         android:id="@+id/note_description"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:hint="Note Description"
+        android:layout_width="367dp"
+        android:layout_height="180dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="9dp"
+        android:background="@android:color/transparent"
         android:gravity="top"
-        app:layout_constraintTop_toBottomOf="@+id/category_spinner"
-        app:layout_constraintBottom_toTopOf="@id/create_note" />
+        android:hint="Note Description"
+        app:layout_constraintBottom_toTopOf="@id/create_note"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/category_spinner" />
 
     <Button
         android:id="@+id/create_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/border"
         android:text="Create Note"
-        app:layout_constraintBottom_toTopOf="@id/delete_note" />
+        app:layout_constraintBottom_toTopOf="@id/delete_note"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
     <Button
         android:id="@+id/delete_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/border"
         android:text="Delete Note"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@id/category_spinner" />
+
 </android.support.constraint.ConstraintLayout>
