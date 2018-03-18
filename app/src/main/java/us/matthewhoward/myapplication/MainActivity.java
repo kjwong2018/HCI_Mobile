@@ -53,11 +53,12 @@ public class MainActivity extends AppCompatActivity {
                         loadNotesFromDatabase();
 
                         //Load preference.  If none found, we default to showing welcome screen
-                        SharedPreferences settingsNoEntry = getSharedPreferences(getString(R.string.pref_no_notes_file_name), 0);
-                        String showNoEntry = settingsNoEntry.getString(getString(R.string.pref_no_notes_show), "true");
+                        SharedPreferences settingsNoNotes = getSharedPreferences(getString(R.string.pref_no_notes_file_name), 0);
+                        String showNoNotes = settingsNoNotes.getString(getString(R.string.pref_no_notes_show), "true");
 
+                        //On Refresh check to see if there are no notes, if so, show dialog box
                         if(noteList.getAdapter().getCount() == 0){
-                            if(showNoEntry.equals("true")){
+                            if(showNoNotes.equals("true")){
                                 showNewEntryDialog();
                             }
                         }
@@ -67,17 +68,17 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        //Load preference.  If none found, we default to showing welcome screen
-        SharedPreferences settingsNoEntry = getSharedPreferences(getString(R.string.pref_no_notes_file_name), 0);
-        String showNoEntry = settingsNoEntry.getString(getString(R.string.pref_no_notes_show), "true");
+        //Load preference.  If none found, we default to showing no notes screen
+        SharedPreferences settingsNoNotes = getSharedPreferences(getString(R.string.pref_no_notes_file_name), 0);
+        String showNoNotes = settingsNoNotes.getString(getString(R.string.pref_no_notes_show), "true");
 
         //Load preference.  If none found, we default to showing welcome screen
         SharedPreferences settingsWelcome = getSharedPreferences(getString(R.string.pref_welcome_file_name), 0);
         String showWelcome = settingsWelcome.getString(getString(R.string.pref_welcome_show), "true");
 
-
+        //If note list count is 0, show new entry dialog box
         if(noteList.getAdapter().getCount() == 0){
-            if(showNoEntry.equals("true")){
+            if(showNoNotes.equals("true")){
                 showNewEntryDialog();
             }
         }
@@ -154,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    //Shows welcome dialog box
     private void showWelcomeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Welcome to NoteTaker");
@@ -189,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-
+    //Shows new entry dialog box
     private void showNewEntryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("We have detected you have no notes...");
@@ -222,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    //Saves preference to show the welcome message on startup
+    //Saves preference whether to show help messages or not
     private void savePreference(String value, int stringId){
         SharedPreferences settings = getSharedPreferences(getString(stringId), 0);
         SharedPreferences.Editor editor = settings.edit();

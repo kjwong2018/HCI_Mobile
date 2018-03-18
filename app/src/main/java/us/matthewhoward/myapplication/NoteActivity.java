@@ -99,6 +99,7 @@ public class NoteActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 boolean success = deleteNote(noteId);
+                //If we could delete note, close screen
                 if(success){
                     finish();
                 }
@@ -177,11 +178,14 @@ public class NoteActivity extends AppCompatActivity {
         // Store the note in the database
         handler.storeNote(db, path, title, description, category);
     }
+
+    //Returns boolean to say whether we deletd an entry or not
     public boolean deleteNote(int id){
         NoteTakingDatabase handler = new NoteTakingDatabase(getApplicationContext());
         SQLiteDatabase db = handler.getWritableDatabase();
         boolean success = handler.deleteNote(db,id);
         if(!success){
+            //We couldn't delete an entry, show relevant error message
             Toast.makeText(getApplicationContext(), "Cannot delete a new entry", Toast.LENGTH_SHORT).show();
             return false;
         }
