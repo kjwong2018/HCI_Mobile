@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent openNote = new Intent(MainActivity.this, NoteActivity.class);
                 openNote.putExtra("noteId", id);
-                Log.w("first", Long.toString(id));
+//                Log.w("first", Long.toString(id));
                 startActivity(openNote);
             }
         });
@@ -62,17 +62,15 @@ public class MainActivity extends AppCompatActivity {
 
                         Cursor note = new NoteTakingDatabase(getApplicationContext()).getReadableDatabase()
                                 .rawQuery("SELECT * FROM notes WHERE _id = " + id, null);
-                        for (String row : note.getColumnNames()){
-                            Log.w("rows", row);
-                        }
-                        Log.w("id", Long.toString(id));
+
+
 
 //                        System.exit(-1);
                         if(note.moveToFirst()){
                             Log.w("sql", note.getString(0));
                         }
-                        Log.w("what", Integer.toString(note.getColumnIndex("noteImage")));
-                        Log.w("picture?", note.getString(note.getColumnIndex("noteImage")));
+//                        Log.w("what", Integer.toString(note.getColumnIndex("noteImage")));
+//                        Log.w("picture?", note.getString(note.getColumnIndex("noteImage")));
                         String path = note.getString(note.getColumnIndexOrThrow("noteImage"));
 //                        Bitmap bitmap = BitmapFactory.decodeFile(path);
                         if(!path.equals("default")){
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        Log.d("Refresh test", "test");
+//                        Log.d("Refresh test", "test");
                         loadNotesFromDatabase();
                         mySwipeRefresh.setRefreshing(false);
                     }
